@@ -25,7 +25,7 @@ class EmailExtractor:
         status, data = self.__mail.search(None, mail_criteria)
         target_email = ""
 
-        if status != "OK":
+        if status != "OK" or data[0] == b'':
             return None
         
         for num in data[0].split():
@@ -45,5 +45,7 @@ class EmailExtractor:
             else:
                 target_email = msg.get_payload(decode=True).decode()
         
-        self.__mail.logout()
         return target_email
+    
+    def __del__(self):
+        self.__mail.logout()
