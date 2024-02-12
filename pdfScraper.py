@@ -1,7 +1,6 @@
 import pdfplumber
 
 class PDFScraper:
-    """Investiagtes occurrences of words in pdf files"""
     def __init__(self, pdf_file_path: str) -> None:
         self.__pdf_file_path = pdf_file_path
 

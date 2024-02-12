@@ -3,7 +3,6 @@ import imaplib
 from email.message import Message
 
 def get_and_decode_multipart_payload(msg: Message) -> list[str]:
-    "Extracts payload from multipart message"
     payloads = []
 
     for part in msg.walk():
@@ -21,7 +20,6 @@ class EmailExtractor:
         self.__mail.select(mailbox)
 
     def extract_and_decode_email_with_matching_keyword(self, mail_criteria: str, keyword: str) -> str|None:
-        """Extracts and decodes email that matches keyword"""
         status, data = self.__mail.search(None, mail_criteria)
         target_email = ""
 
@@ -49,3 +47,4 @@ class EmailExtractor:
     
     def __del__(self):
         self.__mail.logout()
+        
