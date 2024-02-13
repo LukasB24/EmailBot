@@ -13,6 +13,10 @@ class Logger:
         return cls.__instance
     
     def write_log(self, message: str) -> None:
+        if self.__log_path is None:
+            print("You need to specify log path at least once when creating an instance")
+            return
+        
         if not os.path.exists(self.__log_path):
             os.mkdir(self.__log_path)
 

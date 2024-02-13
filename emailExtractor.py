@@ -18,6 +18,8 @@ class EmailExtractor:
         self.__mail = imaplib.IMAP4_SSL(email_server, email_server_port)
         self.__mail.login(user_email, app_pw)
         self.__mail.select(mailbox)
+    
+
 
     def extract_and_decode_email_with_matching_keyword(self, mail_criteria: str, keyword: str) -> str|None:
         status, data = self.__mail.search(None, mail_criteria)
@@ -46,5 +48,6 @@ class EmailExtractor:
         return target_email
     
     def __del__(self):
-        self.__mail.logout()
+        if hasattr(self, "__mail"):
+            self.__mail.logout()
         
