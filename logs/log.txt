@@ -1,1 +1,0 @@
-2024-02-14 22:54:03.493052: "HELLA_20240208_00644006.pdf" successfully stored in "/home/lukas/Test/Zeitnachweise"
