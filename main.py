@@ -13,6 +13,7 @@ def mainloop():
     load_dotenv()
     logger = Logger(os.curdir + "/logs")
     access_time_handler = AccesstimeLogger()
+    CHROME_PATH = os.getenv("CHROME_PATH")
     BASE_PATH = os.getenv("TARGET_PATH")
     APP_PW = os.getenv("APP_PW")
     EMAIL = os.getenv("EMAIL")
@@ -55,7 +56,7 @@ def mainloop():
         pdf_file = ""
 
         if target_email is not None:
-            pdf_file = asyncio.get_event_loop().run_until_complete(fileHandler.get_pdf(target_email))
+            pdf_file = asyncio.get_event_loop().run_until_complete(fileHandler.get_pdf(target_email, CHROME_PATH))
             matching_directory = fileHandler.store_file_based_on_keyword(pdf_file, keywords, BASE_PATH)
 
             if matching_directory is not None:

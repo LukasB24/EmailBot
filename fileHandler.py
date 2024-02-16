@@ -8,13 +8,13 @@ from pyppeteer.errors import PageError
 from pdfScraper import PDFScraper
 from logger import Logger
 
-async def get_pdf(email_content: str) -> str:
+async def get_pdf(email_content: str, chrome_path: str) -> str:
     """Fetches pdf from secmail email"""
     logger = Logger()
 
     try:
         target_file = ""
-        browser = await launch(executablePath="/usr/bin/chromium")
+        browser = await launch(executablePath=chrome_path)
         page = await browser.newPage()
         await page.setContent(email_content)
         open_email_button = await page.querySelector("button")
