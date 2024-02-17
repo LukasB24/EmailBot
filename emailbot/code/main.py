@@ -89,7 +89,7 @@ def mainloop():
         sleep(sleep_duration)
 
 if __name__ == "__main__":
-    print("------------------------\nStart monitoring\n------------------------")
+    print("------------------------\nEmail monitoring\n------------------------")
     print(str(datetime.datetime.now().ctime()) + "\n")
     print("status: " + "\033[32m      active\033[0m")
     mainloop()

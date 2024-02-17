@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "emailbot"
+version = "0.1.0"
+description = ""
+authors = ["Lukas <lburg5534@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pdfplumber = "^0.10.4"
+pyppeteer = "^1.0.2"
+requests = "^2.31.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
