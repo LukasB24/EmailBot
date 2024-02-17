@@ -2,18 +2,23 @@ import asyncio
 import re
 import os
 import shutil
+from pyppeteer import errors
 import requests
 from pyppeteer import launch
 from pyppeteer.errors import PageError
 from pdfScraper import PDFScraper
 from logger import Logger
 
-async def get_pdf(email_content: str, chrome_path: str) -> str:
+async def get_pdf(email_content: str, chrome_path: str) -> str | None:
     """Fetches pdf from secmail email"""
     logger = Logger()
 
     try:
         target_file = ""
+
+        if not os.path.exists(chrome_path):
+            raise os.error(f"'{chrome_path}' does not exist")
+        
         browser = await launch(executablePath=chrome_path)
         page = await browser.newPage()
         await page.setContent(email_content)
@@ -45,8 +50,9 @@ async def get_pdf(email_content: str, chrome_path: str) -> str:
 
         await browser.close()
         return target_file
-    except Exception as e:
+    except errors.PyppeteerError as e:
         logger.write_log(f"Exception occurred during proccessing website elements: {e}")
+        return None
 
 
 def store_file_based_on_keyword(filename: str, words: list[str], base_path: str) -> str | None:

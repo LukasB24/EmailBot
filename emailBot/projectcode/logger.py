@@ -21,7 +21,7 @@ class Logger:
             os.mkdir(self.__log_path)
 
         with open(self.__log_path + "/log.txt", "a",  encoding="utf-8") as file:
-            file.write(str(datetime.now()) + ": " + message + "\n")
+            file.write(str(datetime.now()).split(".")[0] + ": " + message + "\n")
 
 
     
