@@ -23,14 +23,20 @@ def mainloop():
     default_sleep_duration = 0
     exit_message = ""
 
+    if None in (CHROME_PATH, BASE_PATH, APP_PW, EMAIL, MAIL_SERVER, MAIL_PORT):
+        exit_message = "You need to initialize all variables in .env"
+        logger.write_log(exit_message)
+        return exit_message
+
     try:
         MAIL_PORT = int(os.getenv("MAIL_PORT"))
         sleep_duration = int(os.getenv("TIME_UNTIL_NEXT_CHECK")) * 86400
         default_sleep_duration = sleep_duration
 
-    except (ValueError, TypeError) as ve:
+    except ValueError as ve:
         exit_message = f"Check datatypes of mail related env variables: {ve}"
         logger.write_log(exit_message)
+        return exit_message
 
     access_time_handler = AccesstimeLogger()
     last_log = access_time_handler.get_last_log_time()
