@@ -28,7 +28,7 @@ def mainloop():
         sleep_duration = int(os.getenv("TIME_UNTIL_NEXT_CHECK")) * 86400
         default_sleep_duration = sleep_duration
 
-    except ValueError as ve:
+    except (ValueError, TypeError) as ve:
         exit_message = f"Check datatypes of mail related env variables: {ve}"
         logger.write_log(exit_message)
 
