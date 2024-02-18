@@ -4,6 +4,7 @@ This project aims to automatize downloading pdf files from secmail mails into su
 
 ## Requirements
 - Python 3.11
+- local google chromium installation
 - dependency management tool poetry: <code>pipx install poetry</code>
 
 ## Getting started

@@ -1,7 +1,5 @@
 import asyncio
-import datetime
 import imaplib
-import sys
 import os
 from time import sleep
 from dotenv import load_dotenv
@@ -9,11 +7,12 @@ from accesstimeLogger import AccesstimeLogger
 from emailExtractor import EmailExtractor
 from logger import Logger
 import fileHandler
+import ui
+
 
 def mainloop():
     load_dotenv()
     logger = Logger(os.curdir + "/logs")
-    access_time_handler = AccesstimeLogger()
     CHROME_PATH = os.getenv("CHROME_PATH")
     BASE_PATH = os.getenv("TARGET_PATH")
     APP_PW = os.getenv("APP_PW")
@@ -22,6 +21,7 @@ def mainloop():
     MAIL_PORT = 0
     sleep_duration = 0
     default_sleep_duration = 0
+    exit_message = ""
 
     try:
         MAIL_PORT = int(os.getenv("MAIL_PORT"))
@@ -29,9 +29,10 @@ def mainloop():
         default_sleep_duration = sleep_duration
 
     except ValueError as ve:
-        logger.write_log(f"Check datatypes of mail related env variables: {ve}")
-        sys.exit()
+        exit_message = f"Check datatypes of mail related env variables: {ve}"
+        logger.write_log(exit_message)
 
+    access_time_handler = AccesstimeLogger()
     last_log = access_time_handler.get_last_log_time()
 
     if last_log != "":
@@ -45,23 +46,20 @@ def mainloop():
 
     while True:
         if not os.path.exists(BASE_PATH):
-            message = "Base path to target directory does not exist"
-            logger.write_log(message)
-            print(message)
-            sys.exit()
+            exit_message = "Base path to target directory does not exist"
+            logger.write_log(exit_message)
+            return exit_message
 
         try:
             email_extractor = EmailExtractor(MAIL_SERVER, MAIL_PORT, EMAIL, APP_PW, "inbox")
         except imaplib.IMAP4.error as e:
-            message = f"Something went wrong connecting to specified email server: {e}"
-            logger.write_log(message)
-            print(message)
-            sys.exit()
+            exit_message = f"Something went wrong connecting to specified email server: {e}"
+            logger.write_log(exit_message)
+            return exit_message
         except TimeoutError as timeout:
-            message = f"{timeout}: check port in .env"
-            logger.write_log(message)
-            print(message)
-            sys.exit()
+            exit_message = f"{timeout}: check port in .env"
+            logger.write_log(exit_message)
+            return exit_message
 
         target_emails = email_extractor.extract_and_decode_email_with_matching_keyword("UNSEEN", "secmaildata")
         pdf_file = None
@@ -71,9 +69,9 @@ def mainloop():
                 try: 
                     pdf_file = asyncio.get_event_loop().run_until_complete(fileHandler.get_pdf(email, CHROME_PATH))
                 except os.error as e:
-                    logger.write_log(str(e))
-                    print(str(e))
-                    sys.exit()
+                    exit_message = str(e)
+                    logger.write_log(exit_message)
+                    return exit_message
 
                 if pdf_file is None:
                     continue
@@ -88,8 +86,10 @@ def mainloop():
         print("next check:   " + str(round(sleep_duration / 60 / 60 / 24, 2)) + " days")
         sleep(sleep_duration)
 
+
 if __name__ == "__main__":
-    print("------------------------\nEmail monitoring\n------------------------")
-    print(str(datetime.datetime.now().ctime()) + "\n")
-    print("status: " + "\033[32m      active\033[0m")
-    mainloop()
+    ui.display("active", ui.StateType.POSITIV)
+    error_message = mainloop()
+
+    if error_message != "":
+        ui.displayExitScreenAndExit(error_message)
