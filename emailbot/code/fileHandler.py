@@ -9,7 +9,7 @@ from pyppeteer.errors import PageError
 from pdfScraper import PDFScraper
 from logger import Logger
 
-async def get_pdf(email_content: str, chrome_path: str) -> str | None:
+async def get_pdf_from_secmail(email_content: str, chrome_path: str) -> str | None:
     """Fetches pdf from secmail email"""
     logger = Logger()
 

@@ -2,6 +2,7 @@ import datetime
 import enum
 import sys
 import os
+import platform 
 
 class StateType(enum.Enum):
     POSITIV = 0
@@ -24,7 +25,7 @@ def display(state: str, type: StateType):
     print("status: " + state_message + "\n")
 
 def displayExitScreenAndExit(error: str):
-    if sys.platform == 'win32':
+    if platform.system().lower() == 'windows':
         os.system('cls')
     else:
         os.system('clear')

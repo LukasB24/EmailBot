@@ -4,7 +4,8 @@ This project aims to automatize downloading pdf files from secmail mails into su
 
 ## Requirements
 - Python 3.11
-- local google chromium installation
+- local google <b>chromium</b> installation
+- add app password to google account: https://support.google.com/mail/answer/185833?hl=de
 - dependency management tool poetry: <code>pipx install poetry</code>
 
 ## Getting started
@@ -14,3 +15,5 @@ This project aims to automatize downloading pdf files from secmail mails into su
 - run <code>poetry shell</code> to start the created virtual environment
 - finally enter <code>poetry run python emailbot/code/main.py</code>
 
+## Attention
+The project was tested with a gmail account. It can't be guaranteed that it will work with other email servers, since this application uses app passwords to sign into email accounts.

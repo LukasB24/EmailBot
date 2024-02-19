@@ -1,6 +1,7 @@
 import asyncio
 import imaplib
 import os
+import platform
 from time import sleep
 from dotenv import load_dotenv
 from accesstimeLogger import AccesstimeLogger
@@ -73,7 +74,7 @@ def mainloop():
         if target_emails is not None:
             for email in target_emails:
                 try: 
-                    pdf_file = asyncio.get_event_loop().run_until_complete(fileHandler.get_pdf(email, CHROME_PATH))
+                    pdf_file = asyncio.get_event_loop().run_until_complete(fileHandler.get_pdf_from_secmail(email, CHROME_PATH))
                 except os.error as e:
                     exit_message = str(e)
                     logger.write_log(exit_message)
@@ -94,8 +95,21 @@ def mainloop():
 
 
 if __name__ == "__main__":
-    ui.display("active", ui.StateType.POSITIV)
-    error_message = mainloop()
+    ui.display("initialize", ui.StateType.INFO)
+    sleep(30)
 
-    if error_message != "":
-        ui.displayExitScreenAndExit(error_message)
+    if platform.system().lower() == 'windows':
+        os.system('cls')
+    else:
+        os.system('clear')
+
+    try:
+        ui.display("active", ui.StateType.POSITIV)
+        error_message = mainloop()
+        logger = Logger()
+
+        if error_message != "":
+            ui.displayExitScreenAndExit(error_message)
+    except Exception as e:
+        logger.write_log(str(e))
+
