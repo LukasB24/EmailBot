@@ -10,8 +10,8 @@ class AccesstimeLogger:
             current_time = str(datetime.now()).split(".")[0]
             file.write(f"{current_time}\n")
 
-    def get_last_log_time(self) -> str:
-        last_log = ""
+    def get_last_log_time(self) -> str|None:
+        last_log = None
         if os.path.exists(self.__filename):
             with open("timelog.txt", "r", encoding="utf-8") as file:
                 last_log = file.readlines()[-1]

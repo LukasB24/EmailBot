@@ -13,7 +13,7 @@ import ui
 
 def mainloop():
     load_dotenv()
-    logger = Logger(os.curdir + "/logs")
+    logger = Logger()
     CHROME_PATH = os.getenv("CHROME_PATH")
     BASE_PATH = os.getenv("TARGET_PATH")
     APP_PW = os.getenv("APP_PW")
@@ -26,7 +26,6 @@ def mainloop():
 
     if None in (CHROME_PATH, BASE_PATH, APP_PW, EMAIL, MAIL_SERVER, MAIL_PORT):
         exit_message = "You need to initialize all variables in .env"
-        logger.write_log(exit_message)
         return exit_message
 
     try:
@@ -36,48 +35,45 @@ def mainloop():
 
     except ValueError as ve:
         exit_message = f"Check datatypes of mail related env variables: {ve}"
-        logger.write_log(exit_message)
         return exit_message
 
     access_time_handler = AccesstimeLogger()
     last_log = access_time_handler.get_last_log_time()
 
-    if last_log != "":
+    if last_log != None:
         time_passed_since_last_log = access_time_handler.calculate_time_difference()
         sleep_duration -= time_passed_since_last_log
         sleep_duration = 0 if sleep_duration < 0 else sleep_duration
-        print("next check:   " + str(round(sleep_duration / 60 / 60 / 24, 2)) + " days")
-        sleep(sleep_duration)
+        
+        if sleep_duration != 0:
+            print("next check:   " + str(round(sleep_duration / 60 / 60 / 24, 2)) + " days")
+            sleep(sleep_duration)
 
     keywords = ["Zeitnachweisliste", "Lohnsteuerbescheinigung", "Entgeltabrechnung"]
 
     while True:
         if not os.path.exists(BASE_PATH):
             exit_message = "Base path to target directory does not exist"
-            logger.write_log(exit_message)
             return exit_message
 
         try:
             email_extractor = EmailExtractor(MAIL_SERVER, MAIL_PORT, EMAIL, APP_PW, "inbox")
         except imaplib.IMAP4.error as e:
             exit_message = f"Something went wrong connecting to specified email server: {e}"
-            logger.write_log(exit_message)
             return exit_message
         except TimeoutError as timeout:
             exit_message = f"{timeout}: check port in .env"
-            logger.write_log(exit_message)
             return exit_message
 
-        target_emails = email_extractor.extract_and_decode_email_with_matching_keyword("UNSEEN", "secmaildata")
+        target_emails = email_extractor.extract_payload_by_keyword("UNSEEN", subject_keyword="secmail", payload_keyword="secmaildata")
         pdf_file = None
 
         if target_emails is not None:
             for email in target_emails:
                 try: 
                     pdf_file = asyncio.get_event_loop().run_until_complete(fileHandler.get_pdf_from_secmail(email, CHROME_PATH))
-                except os.error as e:
+                except Exception as e:
                     exit_message = str(e)
-                    logger.write_log(exit_message)
                     return exit_message
 
                 if pdf_file is None:
@@ -95,6 +91,7 @@ def mainloop():
 
 
 if __name__ == "__main__":
+    logger = Logger(os.curdir + "/logs")
     ui.display("initialize", ui.StateType.INFO)
     sleep(30)
 
@@ -106,10 +103,10 @@ if __name__ == "__main__":
     try:
         ui.display("active", ui.StateType.POSITIV)
         error_message = mainloop()
-        logger = Logger()
 
         if error_message != "":
             ui.displayExitScreenAndExit(error_message)
+            logger.write_log(error_message)
     except Exception as e:
-        logger.write_log(str(e))
+        logger.write_log("Unhandled exception occured: " + str(e))
 

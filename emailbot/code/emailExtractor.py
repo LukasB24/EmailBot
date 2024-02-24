@@ -23,9 +23,9 @@ class EmailExtractor:
     
 
 
-    def extract_and_decode_email_with_matching_keyword(self, mail_criteria: str, keyword: str) -> list[str] | None:
+    def extract_payload_by_keyword(self, mail_criteria: str, payload_keyword: str, subject_keyword: str) -> list[str] | None:
         status, data = self.__mail.search(None, mail_criteria)
-        target_email = []
+        target_payloads = []
 
         if status != "OK" or data[0] == b'':
             return None
@@ -37,17 +37,20 @@ class EmailExtractor:
 
             raw_email = msg_data[0][1] 
             msg = email.message_from_bytes(raw_email)
+            
+            if not subject_keyword is None and not subject_keyword in msg.as_string().lower():
+                continue
 
             if msg.is_multipart():
                 payloads = get_and_decode_multipart_payload(msg)
                 for element in payloads:
-                    if keyword in element:
-                        target_email.append(element)
+                    if payload_keyword in element:
+                        target_payloads.append(element)
 
             else:
-                target_email.append(msg.get_payload(decode=True).decode())
+                target_payloads.append(msg.get_payload(decode=True).decode())
         
-        return target_email
+        return target_payloads
     
     def __del__(self):
         if hasattr(self, "__mail"):
