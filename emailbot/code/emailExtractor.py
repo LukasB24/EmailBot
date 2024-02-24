@@ -38,7 +38,7 @@ class EmailExtractor:
             raw_email = msg_data[0][1] 
             msg = email.message_from_bytes(raw_email)
             
-            if not subject_keyword is None and not subject_keyword in msg.as_string().lower():
+            if not subject_keyword in msg.as_string().lower():
                 continue
 
             if msg.is_multipart():
