@@ -20,17 +20,22 @@ def mainloop():
     EMAIL = os.getenv("EMAIL")
     MAIL_SERVER = os.getenv("MAIL_SERVER")
     MAIL_PORT = 0
+    SENDER_EMAIL = os.getenv("SENDER_EMAIL")
+    SUBJECT = os.getenv("SUBJECT")
+
     sleep_duration = 0
     default_sleep_duration = 0
     exit_message = ""
 
-    if None in (CHROME_PATH, BASE_PATH, APP_PW, EMAIL, MAIL_SERVER, MAIL_PORT):
+    if None in (CHROME_PATH, BASE_PATH, APP_PW, EMAIL, MAIL_SERVER, MAIL_PORT, SENDER_EMAIL, SUBJECT):
         exit_message = "You need to initialize all variables in .env"
         return exit_message
 
     try:
         MAIL_PORT = int(os.getenv("MAIL_PORT"))
         sleep_duration = int(os.getenv("TIME_UNTIL_NEXT_CHECK")) * 86400
+        SENDER_EMAIL = SENDER_EMAIL.lower()
+        SUBJECT = SUBJECT.lower()
         default_sleep_duration = sleep_duration
 
     except ValueError as ve:
@@ -65,11 +70,14 @@ def mainloop():
             exit_message = f"{timeout}: check port in .env"
             return exit_message
 
-        target_emails = email_extractor.extract_payload_by_keyword("UNSEEN", subject_keyword="secmail", payload_keyword="secmaildata")
+        target_payloads = email_extractor.extract_payload_by_keyword(mail_criteria="UNSEEN", 
+                                                                   target_subject=SUBJECT, 
+                                                                   payload_keyword="<!DOCTYPE html>", 
+                                                                   email_sender=SENDER_EMAIL)
         pdf_file = None
 
-        if target_emails is not None:
-            for email in target_emails:
+        if target_payloads is not None:
+            for email in target_payloads:
                 try: 
                     pdf_file = asyncio.get_event_loop().run_until_complete(fileHandler.get_pdf_from_secmail(email, CHROME_PATH))
                 except Exception as e:

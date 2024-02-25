@@ -23,7 +23,7 @@ class EmailExtractor:
     
 
 
-    def extract_payload_by_keyword(self, mail_criteria: str, payload_keyword: str, subject_keyword: str) -> list[str] | None:
+    def extract_payload_by_keyword(self, mail_criteria: str, payload_keyword: str, target_subject: str, email_sender: str) -> list[str] | None:
         status, data = self.__mail.search(None, mail_criteria)
         target_payloads = []
 
@@ -35,10 +35,12 @@ class EmailExtractor:
             if status != "OK":
                 continue
 
-            raw_email = msg_data[0][1] 
+            raw_email = msg_data[0][1]
             msg = email.message_from_bytes(raw_email)
-            
-            if not subject_keyword in msg.as_string().lower():
+            sender =  str(msg.get("From"))
+            subject = str(msg.get("Subject"))
+
+            if email_sender != sender.lower().replace('"', "") or target_subject != subject.lower():
                 continue
 
             if msg.is_multipart():

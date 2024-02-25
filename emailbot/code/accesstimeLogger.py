@@ -12,9 +12,12 @@ class AccesstimeLogger:
 
     def get_last_log_time(self) -> str|None:
         last_log = None
+
         if os.path.exists(self.__filename):
             with open("timelog.txt", "r", encoding="utf-8") as file:
-                last_log = file.readlines()[-1]
+                if len(file.readlines()) > 0:
+                    last_log = file.readlines()[-1]
+        
         return last_log
         
     def calculate_time_difference(self) -> float:
