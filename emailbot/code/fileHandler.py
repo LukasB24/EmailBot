@@ -26,7 +26,7 @@ async def get_pdf_from_secmail(email_content: str, chrome_path: str) -> str | No
         await open_email_button.click()
         await asyncio.sleep(10)
         password_field = await page.querySelector("#loginform > div:nth-child(2) > input")
-        await password_field.type(os.getenv("SECPASS"))
+        await password_field.type(os.getenv("PASSWORD"))
         login_submit_button = await page.querySelector("#loginform > div.d-flex.flex-row.justify-content-between > div:nth-child(2) > input")
         await login_submit_button.click()
         await asyncio.sleep(10)

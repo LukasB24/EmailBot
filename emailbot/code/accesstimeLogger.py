@@ -15,8 +15,9 @@ class AccesstimeLogger:
 
         if os.path.exists(self.__filename):
             with open("timelog.txt", "r", encoding="utf-8") as file:
-                if len(file.readlines()) > 0:
-                    last_log = file.readlines()[-1]
+                lines = file.readlines()
+                if len(lines) > 0:
+                    last_log = lines[-1]
         
         return last_log
         

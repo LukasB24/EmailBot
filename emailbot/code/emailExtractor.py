@@ -50,7 +50,9 @@ class EmailExtractor:
                         target_payloads.append(element)
 
             else:
-                target_payloads.append(msg.get_payload(decode=True).decode())
+                payload = msg.get_payload(decode=True).decode()
+                if payload_keyword in payload:
+                    target_payloads.append(payload)
         
         return target_payloads
     
