@@ -9,17 +9,17 @@ from pyppeteer.errors import PageError
 from pdfScraper import PDFScraper
 from logger import Logger
 
-async def get_pdf_from_secmail(email_content: str, chrome_path: str) -> str | None:
+async def get_pdf_from_secmail(email_content: str, chromium_path: str) -> str | None:
     """Fetches pdf from secmail email"""
     logger = Logger()
 
     try:
         target_file = ""
 
-        if not os.path.exists(chrome_path):
-            raise os.error(f"'{chrome_path}' does not exist")
+        if not os.path.exists(chromium_path):
+            raise os.error(f"'{chromium_path}' does not exist")
         
-        browser = await launch(executablePath=chrome_path)
+        browser = await launch(executablePath=chromium_path)
         page = await browser.newPage()
         await page.setContent(email_content)
         open_email_button = await page.querySelector("button")

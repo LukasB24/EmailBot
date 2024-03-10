@@ -12,7 +12,7 @@ class EmailBot:
     def __init__(self) -> None:
         load_dotenv()
         self.__logger = Logger()
-        self.__CHROME_PATH = os.getenv("CHROME_PATH")
+        self.__CHROMIUM_PATH = os.getenv("CHROMIUM_PATH")
         self.__BASE_PATH = os.getenv("TARGET_PATH")
         self.__APP_PW = os.getenv("APP_PW")
         self.__EMAIL = os.getenv("EMAIL")
@@ -26,7 +26,7 @@ class EmailBot:
     def check_env_variables(self) -> str|None:
         exit_message = None
 
-        if None in (self.__CHROME_PATH, 
+        if None in (self.__CHROMIUM_PATH, 
                     self.__BASE_PATH, 
                     self.__APP_PW, 
                     self.__EMAIL, 
@@ -104,7 +104,7 @@ class EmailBot:
             if target_payloads is not None:
                 for email in target_payloads:
                     try: 
-                        pdf_file = asyncio.get_event_loop().run_until_complete(fileHandler.get_pdf_from_secmail(email, self.__CHROME_PATH))
+                        pdf_file = asyncio.get_event_loop().run_until_complete(fileHandler.get_pdf_from_secmail(email, self.__CHROMIUM_PATH))
                     except Exception as e:
                         exit_message = str(e)
                         return exit_message
